@@ -105,14 +105,27 @@ MODULE MOD_SPMD_Task
 CONTAINS
 
    !-----------------------------------------
-   SUBROUTINE spmd_init ()
+   SUBROUTINE spmd_init (MyComm_r)
 
       IMPLICIT NONE
+	   integer, intent(in), optional :: MyComm_r
+      LOGICAL mpi_inited
+      ! print*,"OSCARRRR in CoLM before mpi_init"
+      CALL MPI_INITIALIZED( mpi_inited, p_err )
+      ! print*,"OSCARRRR if mpi_inited",mpi_inited
 
-      CALL mpi_init (p_err) 
+      IF ( .NOT. mpi_inited ) THEN
+         CALL mpi_init (p_err) 
+      ENDIF
+	
+      if (present(MyComm_r)) then
+         ! print *,'set MyComm_r','MyComm_r=',MyComm_r
+         p_comm_glb = MyComm_r
+      else
+         p_comm_glb = MPI_COMM_WORLD
+      endif
 
       ! 1. Constructing global communicator.
-      p_comm_glb = MPI_COMM_WORLD
       CALL mpi_comm_rank (p_comm_glb, p_iam_glb, p_err)  
       CALL mpi_comm_size (p_comm_glb, p_np_glb,  p_err) 
 
