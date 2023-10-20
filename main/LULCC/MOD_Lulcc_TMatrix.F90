@@ -150,7 +150,9 @@ MODULE MOD_Lulcc_TMatrix
 #endif
 
 #ifdef RangeCheck
+#ifdef CoLMDEBUG
    CALL check_vector_data ('lccpct_patches ', lccpct_patches)
+#endif
 #endif
 
    END SUBROUTINE READ_LulccTMatrix
